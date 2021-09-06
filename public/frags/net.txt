@@ -1,0 +1,36 @@
+<table name="netConfTbl" id="tbl_init" style="margin-top:10px;">
+    <tr name="netopr"><td colspan="2"><span onclick="decIface(this);">-</span></td></tr>
+    <tr>
+            <td class="item">接口：</td>
+            <td class="value">
+                <select id="net_interface">
+                    <option selected="selected" value="eth0">以太网1</option>
+                    <option value="eth1">以太网2</option>
+                    <option value="wlan0">WiFi</option>
+                </select>
+            </td>
+    </tr>
+    <tr>
+            <td class="item">DHCP：</td>
+            <td class="value">
+                <select id="dhcp_sel">
+                    <option selected="selected" value="dhcp">DHCP</option>
+                    <option value="static">静态IP</option>
+                </select>
+            </td>
+    </tr>
+    <tr>
+            <td class="item">IP：</td>
+            <td class="value"><input id="input_ip" type="text"/></td>
+    </tr>
+    <tr>
+            <td class="item">子网掩码：</td><td class="value"><input id="net_mask" type="text"/></td>
+    </tr>
+    <tr>
+            <td class="item">网关：</td><td class="value"><input id="net_gate" type="text"/></td>
+    </tr>
+    <!-- tr>
+            <td class="item">DNS：</td><td class="value"><input id="net_dns" type="text"/></td>
+    </tr -->
+    <tr name="netopr"><td colspan="2"><span onclick="incIface(this);">+</span></td></tr>
+</talbe>

@@ -1,0 +1,8 @@
+{
+        "userName":"admin",
+        "password":"123456",
+        "interface":"./etc/network/interfaces",
+        "wpa_supplicant":"./etc/wpa_supplicant.conf",
+        "vendor":"./etc/rocktech/vendor.ini",
+        "xmlconf":"/home/rocktech/application/TransCom/etc/conf.xml"
+}

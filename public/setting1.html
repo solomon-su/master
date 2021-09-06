@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta http-equiv="content-type" content="text/html;charset=utf-8">
+        <!-- link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" / -->
+        <title>RockTech Net Gate</title>
+        <script src="js/jquery3.5.1.min.js"></script>
+        <link rel="stylesheet" href="/stylesheets/style.css" type="text/css" />
+        <style>
+                ul li {
+                        line-height: 2.0em;
+
+                }
+
+                ul li:hover {
+                        background-color: darkgray;
+                        color: azure;
+                }
+
+                tr[name="netopr"] {
+                        display: none;
+                        height: 0.5em;
+                        line-height: 0.5em;
+                        text-align: center;
+                        background-color: aquamarine;
+                        overflow: visible;
+                }
+
+                tr[name="netopr"] td {
+                        height: 0.5em;
+                        line-height: 0.5em;
+                        overflow: visible;
+                }
+
+                tr[name="netopr"] td span {
+                        font-size: 2em;
+                        cursor: pointer;
+                }
+
+                table:hover tr[name="netopr"] {
+                        display: table-row;
+                }
+        </style>
+</head>
+
+<body>
+        <script type="text/javascript">
+                var netTblCount = 0;            // 网络设置分组数量
+                var netTblIdPool = 0;
+                var SN = '';
+                var vpnInstalled = false;
+                /**
+                 * @brief 保存当前页面参数
+                 */
+                function save(cb) {
+                        saveNet();
+                        saveWiFi();
+                        saveVPN();
+                        saveCom0();
+                }
+                /**
+                 * @brief 控制设备重启
+                 */
+                function reboot() {
+                        var data = {
+                                CMD: 'REBOOT'
+                        }
+                        $.post("/api/config", data, function (data, status) {
+                                if (status == 'success') {
+                                        alert("等待服务器重启...");
+                                } else {
+                                        alert('服务器错误，数据保存操作失败！');
+                                }
+                        });
+                }
+                /**
+                 * @brief 修改密码。
+                */
+                function modifyPswd() {
+                        var dlg = $("#mdPswd");
+                        dlg.html('<div style="height: 1.5em;color:white;background-color:cadetblue;margin:0px;padding-left: 1em;">\
+                            <h4 style="margin-top:0px">修改密码</h4>\
+                    </div>\
+                    <div style="margin-top:1.5em;padding:1em;">\
+                            <table style="line-height: 2em;border-top-style: solid;border-top-width: 2px;border-top-color:cadetblue">\
+                                <tr><td>新密码：</td><td><input id="newPswd1" type="password"/></td></tr>\
+                                <tr><td>确认新密码：</td><td><input id="newPswd2" type="password"/></td></tr>\
+                            </table>\
+                    </div>\
+                    <div style="margin-top:4em;text-align: center;">\
+                            <span class="btn" onclick="mdPswdOK()">确定</span>&nbsp;<span class="btn" onclick="mdPswdCancel();">取消</span>\
+                    </div>')
+                        var w = window.innerWidth, h = window.innerHeight;
+                        var div_w = dlg.width(), div_h = dlg.height();
+                        var left = 0, top = 0;
+                        left = (w - div_w) / 2;
+                        top = (h - div_h) / 2;
+                        dlg.css('left', left + 'px');
+                        dlg.css('top', top + 'px');
+                        dlg.css('display', 'block');
+                }
+                /**
+                 * @brief 修改密码取消按钮
+                */
+                function mdPswdCancel() {
+                        $("#mdPswd").css('display', 'none');
+                }
+                /** 
+                * @brief 修改密码确定按钮
+                */
+                function mdPswdOK() {
+                        var pswd1 = $("#newPswd1").val();
+                        var pswd2 = $("#newPswd2").val();
+
+                        if (pswd1 == pswd2) {
+                                var data = {
+                                        CMD: "MODIFY_PSWD",
+                                        pswd: pswd1
+                                }
+                                $.post("/api/account", data, function (d, s) {
+                                        if (s == 'success') {
+                                                try {
+                                                        var json = JSON.parse(d);
+                                                        if (json.STATUS == 'SUCCESS') {
+                                                                $("#mdPswd").html('<h3>密码修改成功</h3>');
+                                                        } else {
+                                                                $("#mdPswd").html('<h3>修改密码失败</h3>');
+                                                        }
+                                                        setTimeout(function () {
+                                                                $("#mdPswd").css('display', 'none');
+                                                        }, 5000);
+                                                } catch (e) {
+                                                        console.log(e);
+                                                }
+                                        } else {
+                                                $("#mdPswd").html('<h3>密码修改成功</h3>');
+                                        }
+                                });
+                        }
+                }
+                /**
+                 * @brief 读取静态信息
+                 */
+                function readStaticInfo() {
+                        var data = {
+                                CMD: 'DEV_INFO'
+                        }
+                        $.post("/api/config", data, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                let tbl = $("#devInfoTbl");
+                                                for (var i = 0; i < json.count; i++) {
+                                                        var line = document.createElement('tr');
+                                                        var name = document.createElement('td');
+                                                        if (json.data[i].name == 'SN') {
+                                                                SN = json.data[i].value;
+                                                        }
+                                                        name.innerHTML = json.data[i].name + "：";
+                                                        name.className = "item";
+
+                                                        var value = document.createElement('td');
+                                                        value.innerHTML = json.data[i].value;
+                                                        value.className = "value"
+                                                        line.appendChild(name);
+                                                        line.appendChild(value);
+                                                        tbl.append(line);
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                }
+                        })
+                }
+
+                /**
+                 * @brief 扫描WIFI，呈现扫描结果
+                 */
+                function scanWifi() {
+                        var dlg = $("#wifiScan");
+                        var w = window.innerWidth, h = window.innerHeight;
+                        var div_w = dlg.width(), div_h = dlg.height();
+                        var left = 0, top = 0;
+                        left = (w - div_w) / 2;
+                        top = (h - div_h) / 2;
+                        dlg.css('left', left + 'px');
+                        dlg.css('top', top + 'px');
+
+                        dlg.css("display", "block");
+                        var cmd = {
+                                CMD: 'SCAN_WIFI'
+                        }
+                        $.post("/api/config", cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS == "SCAN_WIFI_FAIL") {
+                                                        alert(json.data)
+                                                }
+                                                var list = $("#wifiScan ul");
+                                                list.html("");
+                                                for (var i = 1; i < json.count; i++) {
+                                                        var ary = json.data[i].split('\t');
+
+                                                        if (ary[4].length > 0 && ary[4].indexOf('\\x') == -1)
+                                                                list.append('<li><input name="wifi" value="' + i + '" id="chk_' + i + '" type="radio"/><label for="chk_' + i + "\">" + ary[4] + "</label></li>")
+                                                }
+                                        } catch (e) {
+                                                alert('服务器返回值错误')
+                                        }
+                                } else {
+                                        alert("服务器错误");
+                                }
+                        });
+                }
+
+                function refreshWifi() {
+                        var dlg = $("#wifiScan");
+                        var cmd = {
+                                CMD: 'SCAN_WIFI'
+                        }
+                        $.post("/api/config", cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS == "SCAN_WIFI_FAIL") {
+                                                        alert(json.data)
+                                                }
+                                                var list = $("#wifiScan ul");
+                                                list.html("");
+                                                for (var i = 1; i < json.count; i++) {
+                                                        var ary = json.data[i].split('\t');
+
+                                                        if (ary[4].length > 0 && ary[4].indexOf('\\x') == -1)
+                                                                list.append('<li><input name="wifi" value="' + i + '" id="chk_' + i + '" type="radio"/><label for="chk_' + i + "\">" + ary[4] + "</label></li>")
+                                                }
+                                        } catch (e) {
+                                                alert('服务器返回值错误')
+                                        }
+                                } else {
+                                        alert("服务器错误");
+                                }
+                        });
+                }
+
+                /// @brief 读取动态信息
+                function refreshDyncInfo() {
+                        var data = {
+                                CMD: 'RUNNING_INFO'
+                        }
+                        $.post("/api/config", data, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+
+                                                let tbl = $("#devInfoTbl");
+                                                for (var i = 0; i < json.count; i++) {
+                                                        var line = document.createElement('tr');
+                                                        var name = document.createElement('td');
+                                                        name.innerHTML = json.data[i].name + "：";
+                                                        name.className = "item";
+                                                        var value = document.createElement('td');
+                                                        value.innerHTML = json.data[i].value;
+                                                        value.className = "value"
+                                                        line.appendChild(name);
+                                                        line.appendChild(value);
+                                                        tbl.append(line);
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        })
+                }
+                /**
+                 * @brief 读取设备信息
+                 */
+                function initDevInfo() {
+                        readStaticInfo();
+                        refreshDyncInfo();
+                }
+                /**
+                 * @brief 构造网络参数配置指令
+                 */
+                function createNetCmd() {
+                        var cmd = {
+                                CMD: 'SAVE_NET',
+                                data: []
+                        }
+
+                        var map = new Map();
+                        var tbls = $('table[name="netConfTbl"]');
+                        tbls.each(function (idx, ele) {
+                                var tblId = $(ele).attr("id");
+                                $("#" + tblId + " tr span").attr("data-tbl", tblId);
+                                let obj = {
+                                        interface: $("#net_interface_" + tblId).val(),
+                                        type: $("#dhcp_sel_" + tblId).val(),
+                                        ip: $("#input_ip_" + tblId).val(),
+                                        mask: $("#net_mask_" + tblId).val(),
+                                        gate: $("#net_gate_" + tblId).val(),
+                                        dns: $("#net_dns_" + tblId).val()
+                                }
+
+                                cmd.data.push(obj);
+                        })
+
+                        for (var i in cmd.data) {
+                                if (cmd.data[i].type == 'dhcp') {// 调整数据格式， 如果网络地址模式使用dhcp方式，则将相关的地址信息设置为null;
+                                        cmd.data[i].ip = null;     // 将相同接口的数据整理在一起
+                                        cmd.data[i].mask = null;
+                                        cmd.data[i].gate = null;
+                                }
+
+                                if (map.has(cmd.data[i].interface)) {    // 将相同接口的配置整理在一起
+                                        let obj = map.get(cmd.data[i].interface);
+                                        obj.data.push(cmd.data[i]);
+                                } else {
+                                        map.set(cmd.data[i].interface, { data: [cmd.data[i]] });
+                                }
+                        }
+
+                        map.forEach(function (value, key) { // 调整多网段内容
+                                if (value.data.length <= 1) return;
+                                for (var count in value.data) {
+                                        if (count == '0') continue;
+                                        value.data[count].interface += ":" + count;
+                                }
+                        })
+                        return cmd;
+                }
+                /**
+                 * @brief 保存网络配置内容
+                 */
+                function saveNet() {
+                        var cmd = createNetCmd();
+
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS == 'SUCCESS') {
+                                                        alert("网络数据保存成功")
+                                                } else {
+                                                        alert("网络数据保存失败");
+                                                }
+                                        } catch (e) {
+                                                alert("网关返回数据错误")
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        });
+                }
+
+                function saveSerial() {
+                        var cmd = {
+                                CMD: 'SAVE_SERIAL',
+                                interface: '',
+                                baud: 115200,
+                                data_len: 8,
+                                stop: 1,
+                                parity: none,
+                                flow: none
+                        }
+                        $.post('/api/config', JSON.stringify(cmd), function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS != 'SUCCESS') {
+
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        });
+                }
+                /**
+                 * @brief 选择WIFI
+                 */
+                function selectWifi() {
+                        var ssid = $("input:radio[name=wifi]:checked").next().text();
+                        $("#wifi_ssid").val(ssid);
+                        $("#wifiScan").css("display", "none");
+                }
+                /**
+                 * @brief 保存WIFI配置
+                 */
+                function saveWiFi() {
+                        var cmd = {
+                                CMD: 'SAVE_WIFI',
+                                ssid: $("#wifi_ssid").val(),
+                                psk: $("#wifi_pswd").val(),
+                                pairwise: $("#wifi_cipher").find("option:selected").val(),
+                                key_mgmt: $("#key_secr").find("option:selected").val()
+                        }
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS != 'SUCCESS') {
+                                                        alert("数据保存成功");
+                                                        // saveVPN();
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        });
+                }
+
+                function saveVPN() {
+                        var cmd = {
+                                CMD: 'SAVE_VPN',
+                        }
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS != 'SUCCESS') {
+                                                        alert("保存VPN操作成功");
+                                                } else {
+                                                        alert("保存VPN设置失败");
+                                                }
+                                        } catch (e) {
+                                                alert("网关反馈数据格式错误");
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('网关后台没有反馈或者系统操作失败。请与业务人员联系');
+                                }
+                        });
+                }
+                /**
+                 * @brief 安装VPN授权证书
+                 */
+                function installCert() {
+                        var cmd = {
+                                CMD: 'SET_CERT',
+                                user: $("#vpn_user").val(),
+                                pswd: $("#vpn_pswd").val(),
+                                devId: SN,
+                        }
+
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                let json = JSON.parse(d);
+                                                if (json.STATUS != 'SUCCESS') {
+                                                        alert("安装VPN授权证书失败，请与业务人员联系");
+                                                } else {
+                                                        alert("安装VPN授权证书成功");
+                                                }
+                                        } catch (e) {
+                                                alert("网关返回数据格式错误");
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('网关后台没有反馈或者系统操作失败。请与业务人员联系');
+                                }
+                        })
+                }
+
+                function scanWifiCancel() {
+                        $("#wifiScan").css("display", "none");
+                        var cmd = {
+                                CMD: 'CANCEL_SCAN'
+                        }
+                        $.post("/api/config", cmd, function (d, s) { // 通知后台停止扫描
+                                if (s == 'success') {
+                                        try {
+
+                                        } catch (e) {
+
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        })
+                }
+                /**
+                 * @brief 检查密码有效性
+                 */
+                function onpswdChange() {
+                        let obj = $("#wifi_pswd");
+                        let data = obj.val();
+                        if (data.length < 8) {
+                                obj.css("color", "red");
+                        } else {
+                                obj.css("color", "green");
+                        }
+                }
+                /**
+                 * @brief 检查VPN证书是否已经安装
+                 */
+                function checkVPNCert() {
+                        let cmd = {
+                                CMD: 'CHECK_VPN_CERT'
+                        }
+
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS == 'INSTALLED') {
+                                                        $("#btn_vpn").html("重新安装")
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        })
+                }
+                /**
+                 * @brief 启动VPN
+                 */
+                function startVPN() {
+                        var btn_obj = $('#btn_start_vpn');
+                        var sw_status = btn_obj.data('status');
+                        if (sw_status == false) {
+                                sw_status = true;
+                        } else {
+                                sw_status = false;
+                        }
+
+                        var cmd = {
+                                CMD: "START_VPN",
+                                sw: sw_status
+                        };
+
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        let json = JSON.parse(d);
+                                        if (json.STATUS == 'SUCCESS') {
+                                                if (sw_status == true) {
+                                                        alert('VPN已经启动');
+                                                        btn_obj.text('关闭VPN')
+                                                } else {
+                                                        alert('VPN已经关闭');
+                                                        btn_obj.text('启动VPN')
+                                                }
+
+                                                btn_obj.data('status', sw_status);
+                                        } else {
+                                                alert('VPN启动失败！原因是：\n' + json.MSG);
+                                        }
+                                } else {
+                                        alert('网关后台错误');
+                                }
+                        });
+                }
+                /**
+                * @brief:保存串口配置
+                */
+                function saveCom0() {
+                        var cmd = {
+                                CMD: 'SAVE_COM0',
+                                name: $("#com0_name").find("option:selected").val(),
+                                baud: $("#com0_baud").find("option:selected").val(),
+                                char_len: $("#com0_charlen").find("option:selected").val(),
+                                stop: $("#com0_stop").find("option:selected").val(),
+                                parity: $("#com0_parity").find("option:selected").val(),
+                                flow: $("#com0_flow").find("option:selected").val(),
+                                server: $("#tcp_server").val(),
+                                port: $("#tcp_port").val()
+                        }
+                        $.post('/api/config', cmd, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS == 'SUCCESS') {
+                                                        alert("数据保存成功");
+                                                } else {
+                                                        alert("数据保存失败")
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                } else {
+                                        alert('服务器错误');
+                                }
+                        });
+                }
+        </script>
+        <div id="mdPswd"
+                style="width:30em; height:17em;z-index: 100; position: fixed; padding:0px;display: none;border-radius: 10px;box-shadow: 0 0 3px 3px;background-color:white;">
+        </div>
+        <div id="wifiScan"
+                style="width:40%; height:60%;z-index: 100; position: fixed; overflow-y:auto;overflow-x:hidden;padding:0px;display: none;box-shadow: 0 0 3px 3px;background-color: lightgray;">
+                <h3 style="background-color: #022;margin-top:0px;padding-left:1em;color:aquamarine">扫描wifi热点</h3>
+                <ul style="list-style:none;padding-left:2em;line-height:2em;width:48em;height:33em;overflow:auto"
+                        id="wifi_list"></ul>
+                <div style="text-align: center;margin-bottom:1.5em;"><span class="btn"
+                                onclick="refreshWifi();">刷新</span><span class="btn"
+                                onclick="selectWifi();">确定</span>&nbsp;<span onclick="scanWifiCancel();"
+                                class="btn">取消</span></div>
+        </div>
+        <div class="net_gate_tile">
+                <div style="width: 100%;height: 100%;display: flex;flex-direction: row;">
+                        <div style="width:50%;height: 100%;">
+                                <h1 style="padding-left: 1em;">
+                                        <a href="http://www.rockemb.com"><img src="/images/logo.png" alt="公司LOGO" /></a>
+                                        <span style="color:cadetblue" id="productName"></span>
+                                </h1>
+                                </h1>
+                        </div>
+                        <div style="width:50%;height: 100%;text-align: right;padding-top: 2em;padding-right: 2em;">
+                                <span class="btn" onclick="save()">全部保存</span>
+                                <span class="btn" onclick="reboot()">重启</span>
+                                <span class="btn" onclick="modifyPswd()">修改密码</span>
+                        </div>
+                </div>
+        </div>
+        <div class="net_gate_content">
+                <div style="width:95%; margin: 0 auto; display: flex;flex-direction:row;">
+                        <div
+                                style="width: 30%; box-shadow: 0 0 3px 3px black inset;padding:10px;border-bottom-right-radius: 30px;padding: 20px;position: relative;vertical-align: top;display:inline-block;">
+                                <table id="devInfoTbl">
+                                        <thead>
+                                                <tr>
+                                                        <th style="width:30%">项目</th>
+                                                        <th style="text-align: left; padding-left: 2em;">参数</th>
+                                                </tr>
+                                        </thead>
+                                </table>
+                        </div>
+                        <div
+                                style="width: 60%; box-shadow: 0 0 3px 3px black inset;padding:10px;margin-left: 1em;height:40em;border-top-left-radius: 30px;padding: 20px;position: relative;vertical-align: top;display:inline-block;">
+                                <div class="tabs">
+                                        <div class="tab-2">
+                                                <label for="tab2-1">网络参数</label>
+                                                <input id="tab2-1" name="tabs-two" type="radio" checked="checked">
+                                                <div id="tab1" style="height: 34em;overflow-y: scroll;">
+                                                        <div
+                                                                style="margin: 0 auto;text-align: center;background-color: cadetblue;height: 2em;padding:10px;line-height: 2em;">
+                                                                <span class="btn" onclick="saveNet()">保存</span>
+                                                        </div>
+                                                </div>
+
+                                        </div>
+                                        <div class="tab-2">
+                                                <label for="tab2-3">WIFI参数</label>
+                                                <input id="tab2-3" name="tabs-two" type="radio">
+                                                <div id="tab3">
+                                                        <div
+                                                                style="margin: 0 auto;text-align: center;background-color: cadetblue;height: 2em;padding:10px;line-height: 2em;">
+                                                                <span class="btn" onclick="saveWiFi()">保存</span>
+                                                        </div>
+                                                        <table style="width:100%;text-align: left;">
+                                                                <tr>
+                                                                        <td class="item">SSID：</td>
+                                                                        <td class="value">
+                                                                                <input id="wifi_ssid"
+                                                                                        type="text" />&nbsp;<span
+                                                                                        onclick="scanWifi()"
+                                                                                        class="btn">扫描</span>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">密码：</td>
+                                                                        <td class="value">
+                                                                                <input id="wifi_pswd"
+                                                                                        onchange="onpswdChange()"
+                                                                                        type="password" />
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">加密方式：</td>
+                                                                        <td class="value"><select id="wifi_cipher">
+                                                                                        <option selected="selected"
+                                                                                                value="CCMP">CCMP
+                                                                                        </option>
+                                                                                        <option value="TRIP">TRIP
+                                                                                        </option>
+                                                                                        <option value="NONE">NONE
+                                                                                        </option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">密钥管理协议：</td>
+                                                                        <td class="value">
+                                                                                <select id="key_secr">
+                                                                                        <option value="WPA-PSK"
+                                                                                                selected="selected">
+                                                                                                WPA-PSK</option>
+                                                                                        <option value="WPA-EAP">WPA-EAP
+                                                                                        </option>
+                                                                                        <option value="IEEE8021X">
+                                                                                                IEEE8021X</option>
+                                                                                        <option value="WPA-PSK-SHA256">
+                                                                                                WPA-PSK-SHA256</option>
+                                                                                        <option value="WPA-EAP-SHA256">
+                                                                                                WPA-EAP-SHA256</option>
+                                                                                        <option value="NONE">NONE
+                                                                                        </option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                        </div>
+                                        <div class="tab-2">
+                                                <label for="tab2-4">VPN配置</label>
+                                                <input id="tab2-4" name="tabs-two" type="radio">
+                                                <div id="tab4">
+                                                        <div
+                                                                style="margin: 0 auto;text-align: center;background-color: cadetblue;height: 2em;padding:10px;line-height: 2em;">
+                                                                <span class="btn" onclick="saveVPN()">保存</span>
+                                                        </div>
+                                                        <table style="width:100%;text-align: left;">
+                                                                <tr>
+                                                                        <td class="item">启动时启动VPN：</td>
+                                                                        <td class="value" style="text-align: left;">
+                                                                                <input type="checkbox" id="vpnEnable"
+                                                                                        style="margin-left: -3em;" />
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="value" colspan="2"
+                                                                                style="text-align: center;"><span
+                                                                                        class="btn" id="btn_start_vpn"
+                                                                                        data-status="false"
+                                                                                        onclick="startVPN()">启动</span>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">账号：</td>
+                                                                        <td class="value" style="text-align: left;">
+                                                                                <input id="vpn_user" type="text" />
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">密码：</td>
+                                                                        <td class="value" style="text-align: left;">
+                                                                                <input id="vpn_pswd" type="password" />
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="value" colspan="2"
+                                                                                style="text-align: center;"><span
+                                                                                        class="btn" id="btn_vpn"
+                                                                                        onclick="installCert();">安装证书</span>
+                                                                        </td>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                        </div>
+                                        <div class="tab-2">
+                                                <label for="tab2-2">串口</label>
+                                                <input id="tab2-2" name="tabs-two" type="radio">
+                                                <div id="tab2">
+                                                        <div
+                                                                style="margin: 0 auto;text-align: center;background-color: cadetblue;height: 2em;padding:10px;line-height: 2em;">
+                                                                <span class="btn" onclick="saveCom0()">保存</span>
+                                                        </div>
+                                                        <table style="width:100%;text-align: left;">
+                                                                <tr>
+                                                                        <td class="item">串口名：</td>
+                                                                        <td class="value">
+                                                                                <select id="com0_name">
+                                                                                        <!-- <option value = "com0" selected="selected" >com0</option>
+                                                                                        <option value = "com1" >com1</option>
+                                                                                        <option value = "com2" >com2</option>
+                                                                                        <option value = "com3" >com3</option>
+                                                                                        <option value = "com4" >com4</option>
+                                                                                        <option value = "com5" >com5</option> -->
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">波特率：</td>
+                                                                        <td class="value">
+                                                                                <select id="com0_baud">
+                                                                                        <option value="600"
+                                                                                                selected="selected">
+                                                                                                600bps</option>
+                                                                                        <option value="1200">1200bps
+                                                                                        </option>
+                                                                                        <option value="2400">2400bps
+                                                                                        </option>
+                                                                                        <option value="4800">4800bps
+                                                                                        </option>
+                                                                                        <option value="9600">9600bps
+                                                                                        </option>
+                                                                                        <option value="19200">19200bps
+                                                                                        </option>
+                                                                                        <option value="38400">38400bps
+                                                                                        </option>
+                                                                                        <option value="57600">57600bps
+                                                                                        </option>
+                                                                                        <option value="115200">115200bps
+                                                                                        </option>
+                                                                                        <option value="230400">230400bps
+                                                                                        </option>
+                                                                                        <option value="460800">460800bps
+                                                                                        </option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">数据位：</td>
+                                                                        <td class="value">
+                                                                                <select id="com0_charlen">
+                                                                                        <option value="5"
+                                                                                                selected="selected">5
+                                                                                        </option>
+                                                                                        <option value="6">6</option>
+                                                                                        <option value="8">8</option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">停止位：</td>
+                                                                        <td class="value">
+                                                                                <select id="com0_stop">
+                                                                                        <option value="one"
+                                                                                                selected="selected">1
+                                                                                        </option>
+                                                                                        <option value="onepointfive">1.5
+                                                                                        </option>
+                                                                                        <option value="two">2</option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">校验位：</td>
+                                                                        <td class="value">
+                                                                                <select id="com0_parity">
+                                                                                        <option value="none"
+                                                                                                selected="selected">无校验位
+                                                                                        </option>
+                                                                                        <option value="odd">奇校验位
+                                                                                        </option>
+                                                                                        <option value="even">偶校验位
+                                                                                        </option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">流控：</td>
+                                                                        <td class="value">
+                                                                                <select id="com0_flow">
+                                                                                        <option value="none"
+                                                                                                selected="selected">无流控
+                                                                                        </option>
+                                                                                        <option value="cts-rts">硬流控
+                                                                                        </option>
+                                                                                        <option value="xon-xoff">软流控
+                                                                                        </option>
+                                                                                </select>
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">服务器：</td>
+                                                                        <td class="value">
+                                                                                <input id="tcp_server" type="text" />
+                                                                        </td>
+                                                                </tr>
+                                                                <tr>
+                                                                        <td class="item">端口：</td>
+                                                                        <td class="value">
+                                                                                <input id="tcp_port" type="text" />
+                                                                        </td>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+        <div class="net_gate_tail" style=" bottom:0px;">
+                <div style="width: 50%;padding: 1em; color:white;display: flex; flex-direction: row;">
+                        <div style="text-align: center;padding-left: 2em;">
+                                <img src="/images/pubWeChat.png" alt="公众号" /><br />
+                                <span style="text-align: center;">企业公众号</span>
+                        </div>
+                </div>
+                <div style="width: 50%;padding: 1em; color:white;text-align: right;">
+                        <div style="text-align: right;">
+                                <h3>全国服务器热线</h3>
+                                <h2>400 602 5060</h2>
+                                <h4>网址：www.rockemb.com</h4>
+                                <h4>IoT平台：dmp.rockemb.net:9900</h4>
+                        </div>
+                </div>
+        </div>
+        <script type="text/javascript">
+                function checkLogin(cb) {
+                        let data = {
+                                CMD: "IS_LOGIN"
+                        }
+                        //data = JSON.stringify( data );
+                        $.post("/api/account", data, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                var json = JSON.parse(d);
+                                                if (json.STATUS != 'SUCCESS') {
+                                                        window.location.href = '/index.html';
+                                                }
+
+                                                if (cb && typeof (cb) == 'function') {
+                                                        cb();
+                                                }
+                                        } catch (e) {
+                                                console.log(e);
+                                                alert('服务器返回数据错误');
+                                        }
+                                } else {
+                                        alert('服务器错误')
+                                }
+                        })
+                }
+
+                function initNetSetting() {
+                        $.get("/frags/net.txt", function (d, s) {
+                                if (s == "success") {
+                                        $("#tab1").append(d);
+                                        var tblId = "netTbl_" + netTblIdPool;
+                                        $("#tbl_init").attr("id", tblId);
+                                        $("#" + tblId + " tr span").attr("data-tbl", tblId);
+                                        $("#net_interface").attr("id", "net_interface_" + tblId);
+                                        $("#dhcp_sel").attr("id", "dhcp_sel_" + tblId);
+                                        $("#input_ip").attr("id", "input_ip_" + tblId);
+                                        $("#net_mask").attr("id", "net_mask_" + tblId);
+                                        $("#net_gate").attr("id", "net_gate_" + tblId);
+                                        $("#net_dns").attr("id", "net_dns_" + tblId);
+
+                                        netTblCount++;
+                                        netTblIdPool++;
+                                }
+                        });
+                }
+                /**
+                 * @brief 增加网络配置组
+                 */
+                function incIface() {
+                        initNetSetting();
+                }
+                /**
+                 * @brief 删除网络配置组
+                 */
+                function decIface(obj) {
+                        var tblId = obj.getAttribute("data-tbl");
+                        let id = tblId.substr(tblId.indexOf("_") + 1);
+                        id = parseInt(id);
+
+                        if (id != 0) {
+                                $("#" + tblId).remove();
+                                netTblCount--;
+                        }
+                }
+                /**
+                 * @brief 载入数据表格样式，并呈现表格
+                 */
+                function __init_tbl(count, cb) {
+                        netTblCount = count;
+
+                        $.get("/frags/net.txt", function (d, s) {
+                                if (s == "success") {
+                                        netTblIdPool = 0;
+                                        for (; netTblIdPool < count; netTblIdPool++) {
+                                                if (netTblIdPool != 0)
+                                                        $("#tab1").append(d);
+                                                var tblId = "netTbl_" + netTblIdPool;
+                                                $("#tbl_init").attr("id", tblId);
+                                                $("#" + tblId + " tr span").attr("data-tbl", tblId);
+
+                                                $("#net_interface").attr("id", "net_interface_" + tblId);
+                                                $("#dhcp_sel").attr("id", "dhcp_sel_" + tblId);
+                                                $("#input_ip").attr("id", "input_ip_" + tblId);
+                                                $("#net_mask").attr("id", "net_mask_" + tblId);
+                                                $("#net_gate").attr("id", "net_gate_" + tblId);
+                                                $("#net_dns").attr("id", "net_dns_" + tblId);
+
+                                                cb(tblId);           // 呈现数据
+                                        }
+                                }
+                        });
+                }
+                /**
+                 * @brief 呈现网络配置信息。
+                 */
+                function __show_net_conf(conf) {
+                        let count = conf.count;
+
+                        __init_tbl(count, function (tblId) {
+                                if (tblId == 'netTbl_0') {// 配置WIFI
+                                        $("#net_interface_" + tblId).val('wlan0');
+                                        if (conf.wlan[0].add_type == 'dhcp') {
+                                                $("#dhcp_sel_" + tblId).val('dhcp');
+                                                $("#input_ip_" + tblId).val('');
+                                                $("#net_mask_" + tblId).val('');
+                                                $("#net_gate_" + tblId).val('');
+                                        } else {
+                                                $("#dhcp_sel_" + tblId).val('static');
+                                                $("#input_ip_" + tblId).val(conf.wlan[0].address);
+                                                $("#net_mask_" + tblId).val(conf.wlan[0].mask);
+                                                $("#net_gate_" + tblId).val(conf.wlan[0].gateway);
+                                        }
+                                        //$( "#net_dns_" + tblId ).val( conf.wlan.address );
+                                } else {
+                                        let idx = parseInt(tblId.substr(tblId.indexOf('_') + 1));
+                                        if (idx < 2 || (conf.eth[0].multi && idx < conf.eth[0].multi.length + 2)) { // 这是eth0
+                                                $("#net_interface_" + tblId).val('eth0');
+                                                if (idx - 1 == 0) {
+                                                        if (conf.eth[0].add_type == 'dhcp') {
+                                                                $("#dhcp_sel_" + tblId).val('dhcp');
+                                                                $("#input_ip_" + tblId).val('');
+                                                                $("#net_mask_" + tblId).val('');
+                                                                $("#net_gate_" + tblId).val('');
+                                                        } else {
+                                                                $("#dhcp_sel_" + tblId).val('static');
+                                                                $("#input_ip_" + tblId).val(conf.eth[0].address);
+                                                                $("#net_mask_" + tblId).val(conf.eth[0].mask);
+                                                                $("#net_gate_" + tblId).val(conf.eth[0].gateway);
+                                                        }
+                                                } else if (conf.eth[0].multi) {
+                                                        if (conf.eth[0].multi[idx - 2].add_type == 'dhcp') {
+                                                                $("#dhcp_sel_" + tblId).val('dhcp');
+                                                                $("#input_ip_" + tblId).val('');
+                                                                $("#net_mask_" + tblId).val('');
+                                                                $("#net_gate_" + tblId).val('');
+                                                        } else {
+                                                                $("#dhcp_sel_" + tblId).val('static');
+                                                                $("#input_ip_" + tblId).val(conf.eth[0].multi[idx - 2].address);
+                                                                $("#net_mask_" + tblId).val(conf.eth[0].multi[idx - 2].mask);
+                                                                $("#net_gate_" + tblId).val(conf.eth[0].multi[idx - 2].gateway);
+                                                        }
+                                                }
+                                        } else { // 这是eth1
+                                                $("#net_interface_" + tblId).val('eth1');
+                                                if ((conf.eth[0].multi && idx - 2 - conf.eth[0].multi.length == 0) || idx - 2 == 0) {
+                                                        if (conf.eth[1].add_type == 'dhcp') {
+                                                                $("#dhcp_sel_" + tblId).val('dhcp');
+                                                                $("#input_ip_" + tblId).val('');
+                                                                $("#net_mask_" + tblId).val('');
+                                                                $("#net_gate_" + tblId).val('');
+                                                        } else {
+                                                                $("#dhcp_sel_" + tblId).val('static');
+                                                                $("#input_ip_" + tblId).val(conf.eth[1].address);
+                                                                $("#net_mask_" + tblId).val(conf.eth[1].mask);
+                                                                $("#net_gate_" + tblId).val(conf.eth[1].gateway);
+                                                        }
+                                                } else if (conf.eth[1].multi) {
+                                                        if (conf.eth[1].multi[idx - 3].add_type == 'dhcp') {
+                                                                $("#dhcp_sel_" + tblId).val('dhcp');
+                                                                $("#input_ip_" + tblId).val('');
+                                                                $("#net_mask_" + tblId).val('');
+                                                                $("#net_gate_" + tblId).val('');
+                                                        } else {
+                                                                $("#dhcp_sel_" + tblId).val('static');
+                                                                $("#input_ip_" + tblId).val(conf.eth[1].multi[idx - 3 - conf.eth[0].multi.length].address);
+                                                                $("#net_mask_" + tblId).val(conf.eth[1].multi[idx - 3 - conf.eth[0].multi.length].mask);
+                                                                $("#net_gate_" + tblId).val(conf.eth[1].multi[idx - 3 - conf.eth[0].multi.length].gateway);
+                                                        }
+                                                }
+                                        }
+                                }
+                        });
+                }
+                /**
+                 * @brief 从网关中读取网络配置信息并呈现在页面上
+                 */
+                function initNetConfInfo() {
+                        let data = {
+                                CMD: "NET_CONF"
+                        }
+
+                        $.post("/api/info", data, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                let json = JSON.parse(d);
+                                                if (json.STATUS == 'SUCCESS') {
+                                                        __show_net_conf(json);
+                                                } else {
+                                                        alert(json.MSG);
+                                                }
+                                        } catch (e) {
+                                                alert('网关返回数据格式错误');
+                                        }
+                                } else {
+                                        alert('读取网络配置信息失败，无法呈现当前网络配置情况');
+                                }
+                        });
+                }
+                /**
+                 * @brief 从网关中读取wifi配置信息并呈现在页面上
+                 */
+                function initWifiConfInfo() {
+                        let data = {
+                                CMD: "WIFI_CONF"
+                        }
+
+                        $.post("/api/info", data, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                let json = JSON.parse(d);
+                                                if (json.STATUS == 'SUCCESS') {
+                                                        $("#wifi_ssid").val(json.network.ssid);
+                                                        $("#wifi_pswd").val(json.network.psk);
+                                                        $("#wifi_cipher").val(json.network.pairwise);
+                                                        switch (json.network.key_mgmt) {
+                                                                case 'WPA-PSK':
+                                                                        $("#key_secr").val('WPA-PSK');
+                                                                        break;
+                                                                case 'WPA-EAP':
+                                                                        $("#key_secr").val('WPA-EAP');
+                                                                        break;
+                                                                case 'IEEE8021X':
+                                                                case 'NONE':
+                                                                        $("#key_secr").val(json.network.key_mgmt);
+                                                                        break;
+                                                                case 'WPA-PSK-SHA256':
+                                                                        $("#key_secr").val('WPA-PSK-SHA256');
+                                                                        break;
+                                                                case 'WPA-EAP-SHA256':
+                                                                        $("#key_secr").val('WPA-EAP-SHA256');
+                                                                        break;
+                                                        }
+                                                } else {
+                                                        alert('获取WIFI配置信息失败');
+                                                }
+                                        } catch (e) {
+                                                alert('网关返回数据格式错误');
+                                        }
+                                } else {
+                                        alert('读取网络配置信息失败，无法呈现当前网络配置情况');
+                                }
+                        });
+                }
+                /**
+                 * @brief 从网关中读取VPN配置信息并呈现在页面上
+                 */
+                function initVPNConfInfo() {
+                        let data = {
+                                CMD: "VPN_CONF"
+                        }
+
+                        $.post("/api/info", data, function (d, s) {
+                                if (s == 'success') {
+                                        try {
+                                                let json = JSON.parse(d);
+                                                if (json.STATUS == 'SUCCESS') {
+                                                        $("#vpnEnable").attr("checked", json.enable);
+                                                        $("#btn_vpn").attr("disabled", json.installed);
+
+                                                        vpnInstalled = json.installed
+                                                } else {
+                                                        alert('获取VPN数据失败');
+                                                }
+                                        } catch (e) {
+                                                alert('网关返回数据格式错误');
+                                        }
+                                } else {
+                                        alert('读取网络配置信息失败，无法呈现当前网络配置情况');
+                                }
+                        });
+                }
+
+                function getDevName() {
+                        let data = {
+                                CMD: "DEV_NAME"
+                        }
+                        $.post("/api/devName", data, function (data1, status) {
+                                if (status == 'success') {
+                                        try {
+                                                let json = JSON.parse(data1);
+                                                $("#productName").text(json.name);
+                                        } catch (e) {
+                                                console.log(e);
+                                        }
+                                }
+                        });
+                }
+                function __showCom_conf(conf) {
+                        let json = JSON.parse(conf);
+                        let devName = SN.substr(0, 6);
+                        if (devName.substr(0, 3) == "100") {
+                                devName = devName.replace(/100/, "ISG")
+                        }
+                        for (let i in json.COMS.data) {
+                                let com = json.COMS.data[i];
+                                if (devName == com.dev) {
+                                        for (let j = 0; j < com.coms.length; j++) {
+                                                let info = "<option value='" + com.coms[j].name + "' >" + com.coms[j].name + "</option>"
+                                                $("#com0_name").append(info)
+                                                if (com.coms[j].value == json.CONF_FILE.CONF_FILE.dir[0].var[0]._value)
+                                                        $("#com0_name").val(com.coms[j].name);
+                                        }
+                                }
+                        }
+                        $("#com0_baud").val(json.CONF_FILE.CONF_FILE.dir[0].var[1]._value);
+                        $("#com0_charlen").val(json.CONF_FILE.CONF_FILE.dir[0].var[2]._value);
+                        $("#com0_stop").val(json.CONF_FILE.CONF_FILE.dir[0].var[3]._value);
+                        $("#com0_parity").val(json.CONF_FILE.CONF_FILE.dir[0].var[4]._value);
+                        $("#com0_flow").val(json.CONF_FILE.CONF_FILE.dir[0].var[5]._value);
+                        $("#tcp_server").val(json.CONF_FILE.CONF_FILE.dir[1].var[0]._value);
+                        $("#tcp_port").val(json.CONF_FILE.CONF_FILE.dir[1].var[1]._value);
+                }
+
+                /**
+                * 下拉框默认显示
+                */
+
+                function initCom() {
+                        let data = {
+                                CMD: "COM_CONF"
+                        }
+                        $.post("api/info", data, function (d, s) {
+                                if (s == "success") {
+                                        try {
+                                                let json = JSON.parse(d);
+                                                if (json.STATUS == 'SUCCESS') {
+                                                        __showCom_conf(d);
+                                                } else {
+                                                        alert(json.MSG);
+                                                }
+                                        } catch (e) {
+                                                alert('网关返回数据格式错误');
+                                        }
+                                } else {
+                                        alert('读取网络配置信息失败');
+                                }
+                        });
+                }
+
+                /**
+                 * @brief 初始化页面
+                 */
+                function init() {
+                        checkLogin(function () {
+                                initDevInfo();    // 页面初始化完成后读入设备静态信息
+                                initNetConfInfo();
+                                initWifiConfInfo();
+                                initVPNConfInfo();
+                                initNetSetting();
+                                checkVPNCert();
+                                initCom();
+                        });
+                }
+                getDevName()
+                init();
+        </script>
+</body>
+
+</html>

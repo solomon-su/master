@@ -1,0 +1,51 @@
+{
+	"data": [{
+			"dev": "ISG100",
+			"coms": [{
+					"name":"com0",
+					"value":"/dev/ttymxc1"
+				},
+				{
+					"name":"com1",
+					"value":"/dev/ttymxc3"
+				}
+			]
+		},
+		{
+			"dev": "ISG200",
+			"coms": [{
+					"name":"com0",
+					"value":"/dev/ttymxc0"
+				},
+				{
+					"name":"com1",
+					"value":"/dev/ttymxc1"
+				},
+				{
+					"name":"com2",
+					"value":"/dev/ttyUSB0"
+				},
+				{
+					"name":"com3",
+					"value":"/dev/ttyUSB1"
+				},
+				{
+					"name":"com4",
+					"value":"/dev/ttymxc4"
+				},
+				{
+					"name":"com5",
+					"value":"/dev/ttymxc2"
+				},
+				{
+					"name":"com6",
+					"value":"/dev/ttymxc5"
+				},
+				{
+					"name":"com7",
+					"value":"/dev/ttymxc3"
+				}
+			]
+		}
+	]
+}

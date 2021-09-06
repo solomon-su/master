@@ -1,0 +1,191 @@
+{       
+        "ISG100_R01":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800M Hz, 512MB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，4GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路RJ45 10Mbps/100Mbps"},
+                        {"name":"RS232" ,       "value":"1路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"1路RS485 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery,Boot"},
+                        {"name":"指示灯" ,       "value":"电源、状态、LAN、4G、WIFI"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-20~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,         "value":"110 X 94.8 X 26"}
+                ]
+        },
+        "ISG100_R02":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800M Hz, 256MB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，4GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路RJ45 10Mbps/100Mbps"},
+                        {"name":"RS232" ,       "value":"1路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"1路RS485 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery,Boot"},
+                        {"name":"指示灯" ,       "value":"电源、状态、LAN、4G、WIFI"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-20~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"110 X 94.8 X 26"}
+                ]
+        },
+        "ISG100_R03":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800M Hz, 256MB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，4GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路RJ45 10Mbps/100Mbps"},
+                        {"name":"RS232" ,       "value":"1路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"1路RS485 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery,Boot"},
+                        {"name":"指示灯" ,       "value":"电源、状态、LAN、4G、WIFI"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-20~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"110 X 94.8 X 26"}
+                ]
+        },
+        "ISG200_R01":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800MHz, 512MB可升级到1GB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，8GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路LAN RJ45 10M/100Mbps"},
+                        {"name":"RS232" ,       "value":"2路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"6路RS485(4路隔离型) 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery、Boot"},
+                        {"name":"指示灯" ,       "value":"电源、工况、LAN、4G、WIFI数据指示LED灯"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-40~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V宽电源输入，10KV ESD静电防护"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"186 X 114 X 30"}
+                ]
+        },
+        "ISG200_R02":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800MHz, 512MB可升级到1GB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，8GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"5路LAN RJ45 10M/100Mbps"},
+                        {"name":"RS232" ,       "value":"2路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"6路RS485(4路隔离型) 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery、Boot"},
+                        {"name":"指示灯" ,       "value":"电源、工况、LAN、4G、WIFI数据指示LED灯"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-40~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V宽电源输入，10KV ESD静电防护"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"173 X 114 X 46"}
+                ]
+        },
+        "ISG200_R03":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800MHz, 512MB可升级到1GB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，4GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路LAN RJ45 10M/100Mbps"},
+                        {"name":"RS232" ,       "value":"2路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"4路RS485(4路隔离型) 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery、Boot"},
+                        {"name":"指示灯" ,       "value":"电源、工况、LAN、4G、WIFI数据指示LED灯"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-40~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V宽电源输入，10KV ESD静电防护"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"173 X 114 X 46"}
+                ]
+        },
+        "ISG210":{                
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800MHz, 512MB可升级到1GB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，8GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路LAN RJ45 10M/100Mbps"},
+                        {"name":"RS232" ,       "value":"2路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"6路RS485(4路隔离型) 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery、Boot"},
+                        {"name":"指示灯" ,       "value":"电源、工况、LAN、4G、WIFI数据指示LED灯"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-40~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V宽电源输入，10KV ESD静电防护"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"186 X 114 X 30"}
+                ]
+        },
+        "ISG300_R01":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800M Hz, 512MB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，4GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路RJ45 10Mbps/100Mbps"},
+                        {"name":"RS232" ,       "value":"2路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"6路RS485 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery,Boot"},
+                        {"name":"指示灯" ,       "value":"电源、状态、LAN、4G、WIFI"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-20~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"110 X 94.8 X 26"}
+                ]
+        },
+        "ISG500_R01":{
+                "data":[
+                        {"name":"支持协议",      "value":"Modbus TCP/RTU, MQTT,OPC UA BACnet/IP Profinet"},
+                        {"name":"运行内存",      "value":"板载DDR3 800M Hz, 512MB"},
+                        {"name":"EMMC" ,        "value":"板载eMMC，4GB"},
+                        {"name":"Mini PCIe" ,   "value":"1路 Mini PCIe(支持标准3G/4G模块)"},
+                        {"name":"WIFI&BT" ,     "value":"可选，WIFI IEEE802.11bgn&BT4.0共用模组"},
+                        {"name":"LAN" ,         "value":"2路RJ45 10Mbps/100Mbps"},
+                        {"name":"RS232" ,       "value":"2路RS232 3PIN绿色端子"},
+                        {"name":"RS485" ,       "value":"6路RS485 3PIN绿色端子"},
+                        {"name":"SIM" ,         "value":"1路抽屉式SIM卡槽"},
+                        {"name":"TF" ,          "value":"1路TF卡槽"},
+                        {"name":"按键" ,         "value":"Recovery,Boot"},
+                        {"name":"指示灯" ,       "value":"电源、状态、LAN、4G、WIFI"},
+                        {"name":"看门狗" ,       "value":"1路CPU内部看门狗，1路硬件看门狗"},
+                        {"name":"工作温度" ,     "value":"-20~70℃"},
+                        {"name":"电源" ,         "value":"DC9~36V"},
+                        {"name":"EMC" ,         "value":"4级"},
+                        {"name":"尺寸(mm)" ,    "value":"110 X 94.8 X 26"}
+                ]
+        }
+}

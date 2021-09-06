@@ -1,0 +1,7 @@
+{
+	"enable":true,
+	"installed":false,
+	"vpntype":"openVPN",
+	"devType":"tap",
+	"vpnVer":"1.0"
+}
